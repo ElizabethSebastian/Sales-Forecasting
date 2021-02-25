@@ -9,62 +9,81 @@
 
 
 ## Problem Statement
-To classify Reddit posts from r/Premier league and r/NBA using Natural Language Processing (NLP). The model evaluated and selected based on Accuracy score is expected to predict to which subreddit a given post belongs to.
 
-The model should then help Reddit data science team to advise their advertisers on spending forecast for targeted marketing campaigns of products and services based on the predicted subreddit. Reddit data science team is the primary stake holder and advertising companies are the secondary stakeholders.
+1.1 Objective :
+The main objective is to estimate or predict the total sales of Walmart retail goods at stores in various locations for the next 28-days. The prediction is based on close to 5 years of historical daily total sales data. This project intended to evaluate and compare the different forecasting methods on the given data. This estimation certainly helps different companies to increase their revenues. SMAPE (symmetric mean absolute percentage error) is used to quantify the accuracy of all forecasts and to compare different forecasting algorithms. A lower SMAPE means higher accuracy.
 
-**Objective**<br>
-The objective is to find out the attributes of each group and their online behaviour:<br>With the information gathered, business can<br>
-        1) Decide how much advertising dollars to spend and on which group to obtain better ROI.<br>
-        2) Types of products and services to be advertised.<br>
-        3) Frequency of advertisement.<br>
-        4) Types of advertisement.<br>
-        5) KPI expected from Reddit.
+1.2 Data: 
+The total sales of various products sold in the USA, organized in the form of grouped time series.
+
 
 ## Executive Summary
 
-### Gather Data
- 1) Extract posts from the 2 subreddits that records football league system. -Premier League and NBA.<br>
- 2) Attempt to extract 75 pages of posts equivalent to approx. 2000 unique posts per subreddit.<br>
- 3) Write them to individual .csv files for recording purposes.<br>
- 4) Read these .csv files to separate dataframes and examine data extracted.<br>
+### Hypothesis
+Based on the data given some of the factors that may affect sales are:
+Day- Customers shopping time and spending mostly depends on the weekend. Many customers may like to shop only at weekends.
 
-
-### Data Cleaning
-1) Removed uncessary columns.<br>
-2) Found many rows with null values in the column selftext. Created a new colum feature_var that combines title and selftext and used this colum to gather words.<br>
-3) Removed duplicated rows.<br>
-4) After cleaning the invalid/ unnecessary rows, combine/concat the cleaned dataframes from both subreddits into 1<br>
-5) After combining, column feature_var that contains all the texts from the posts is passed to text_processor function that does the following:<br>
-    - removes HTML tags using Beautiful Soup
-    - extracts words with letters and replaces punctuations and special characters with blank space
-    - convert all characters to lower case
-    - lammetize the extracted words
-    - removes english stop words and extracts meaningful words from the above list of words
-
-
-### Exploratory Data Analysis
+Special Events/Holidays: Depending on the events and holidays customers purchasing behavior may change. For holidays like Easter, food sales may go up and for sporting events like Superbowl finals Household item sales may go up.
  
-1) The subreddits vary hugely in terms of the number of members. NBA has way more followers with 
-   3.8m memebers than Premier League with 324k members.<br>
-2) Number of unique posts per subreddit is fairly comparable between the 2 subreddits. <br>
-3) The number of comments per posts is significantly higher for NBA subreddit, which is not surprising, given that NBA subreddit has much larger members that Premiew League. <br>
-4) Another interesting fact is that the average length per post is way higher for NBA subreddit compared 
-    to Premier League subreddit. <br>
-5) There are quite a number of words that are commonly seen in both subreddits. not surprising as both 
-    subreddits are professional baseketball league. Words like 'team','play', 'game' and 'player' are some 
-    of them.<br>
+### Exploratory Data Analysis
+#### Time series analysis
+The time series for all years is plotted to observe the seasonality trend over the years.
+It can be seen that sales are very less on some days like Christmas
+#### Yearly Sales Trend
+It can be seen that total sales are increasing every year. This trend is due to the introduction of new products every year at Walmart. Also, the trend pattern for increase or decrease is almost similar for every year. 
+#####  Monthly Sales Trend
+It can be seen that total sales are increasing every year. This trend is due to the introduction of new products every year at Walmart. Also, the trend pattern for increase or decrease is almost similar for every year.
+It can be observed that the sales were increasing every year and are at a peak in March. After March, there is a decrease in sales till May and plummeted in June recording the lowest sales every year. After, June there is a gradual increase in sales for two months, before dropping further until November.
+##### Weekly Sales Trend
+As expected the total sales are more during Saturday and Sunday when compared to normal weekdays.
+##### Sales trend on Holiday and Special Events:
+The sales were highest on SuperBowl sporting events. On the day of the National holidays, sales were low. And sales were consistent on the day of the religious festivals.
 
-### Feature Engineering
-1. Binarize the target column - Subreddit column
+### Preprocessing,
+**Converting days to dates to analyze the data in a better way**
+**Train/Test Split**
+Since we need to forecast for 28 days, with 5 years of data. All the data with dates less than or equal to April 24th,2016 is considered as training data. Prediction is made for the 28 days following April 24th,2016.
+#### **Modeling**
+specify (or build) a model, then fit it to the training data, and finally call predict to generate forecasts for the given forecasting horizon.
+#### Steps Involved
+
+Model Training/Cross-Validation
+Prediction
+SMAPE Error for Comparison of Models
 
 
-### Preprocessing, Modelling & Evaluation
 
-#### **Preprocessing**
-1. Inspect Baseline Score
-2. Performed Train-Test-Split   
-3. Done EDA on Count Vectorizer and TD-IDF Vectorizer.
+Why SMAPE?
+The sMape error rate or symmetrical mean absolute percent error is listed as one of the significant, but uncommon forecast error measurements.
+#### Naive model
+Predicting the last value.
+#### Seasonal Naive model
+Predicting the last season.
+#### Exponential Smoothing
+The previous time steps are exponentially weighted and added up to generate the forecast. The weights decay as we move further backwards in time. 
+#### Auto ETS
+Exponential Smoothing State Space Model. The methodology is fully automatic. The only required argument for ets is the time series.
+#### Auto Arima
+ARIMA stands for Auto Regressive Integrated Moving Average. While exponential smoothing models were based on a description of trend and seasonality in data, ARIMA models aim to describe the correlations in the time series. Auto Arima automatically select the best ARIMA model. 
+#### Prophet
+Prophet is an opensource time series forecasting project by Facebook. It is based on an additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, including holiday effects. It works best with time series that have strong seasonal effects and several seasons of historical data. It is also supposed to be more robust to missing data and shifts in trend compared to other models.
+#### Random Forest Regression:
+The Random Forest model is a bagging technique, which uses bootstrap sampling without replacement of every sample to train and it reduces variance while training and prevents from overfitting.
+
+On hyperparameter tuning, we found out max_depth=26, n_estimators=31.
+
+#### Lgbm Regression.
+Lgbm Regression is a boosting technique to reduce bias while training the model. It has faster training speed and higher efficiency. It replaces continuous values to discrete bins which result in lower memory usage.
+On hyperparameter tuning, we found out learning_rate = 0.071, num_leaves = 12 and min_data_in_leaf = 147.
+
+#### Tuning
+In the ReducedRegressionForecaster, both the window_length and strategy arguments are hyper-parameters which we may want to optimise.
+SlidingWindowSplitter
+We fit the forecaster on the initial window, and then use temporal cross-validation to find the optimal parameter
+GridSearchCV, we can tune regressors imported from scikit-learn, in addition to tuning window_length. For example RandomForestRegressor.
+
+#### Ensembling Models
+Ensemble methods help improve machine learning results by combining multiple models. Using ensemble methods allows us to produce better predictions compared to a single model. 
 
 #### **Modeling**
 1. Worked with 2 classification models - Multinomial Naive Bayes and Logistic Regression, coupled with Count Vectorizer and TD-IDF Vectorizer
@@ -74,24 +93,9 @@ The objective is to find out the attributes of each group and their online behav
     - Fit the train data 
     - Score both train and test data to see model performance
 
-#### **Evaluation & Selection**
-1. Getting back to the problem statement, the objective of the project is to classify accurately the subreddit a given post belongs to. The model then helps advertisers market their products and services applicable to the 2 subreddit members based on the nature of the posts within these subreddits.Accuracy metric is a good metrics in classifying the posts. <br>
-2. Thus the preliminary basis of model selection is Accuracy metric and TD-IDF with Multinomial Naive Base scored the best for Accuracy on unseen/test data.
-3. The variance between training score and test score is also lower for TD-IDF with Naive Base model. 
-4. When Accuracy is used as a metric to evaluate models, the following criteria is also checked.<br>
-    - Datasets are symmetric.<br>
-    - The values of false positive and false negatives should be almost the same.
-5. While the model selection is primarily based on Accuracy scores, confusion matrix and ROC-AUC scores were also examined for each of the model combinations to ensure these scores of the model selected doesn't vary significantly with scores of other models. Plotting and inspecting ROC Curve & AUC as:
-    - It represents the degree or measure of separability of the model into the 2 classes and is an important 
-metric in classification problems. <br>
-    - Higher the AUC, the better the model is at distinguishing between the 2 subreddits in this case.
 
-Thus the model selected is **Multinomial Naive model with TD-IDF.**
-
-
-### **Data Analysis post modelling**
-1. Identifying words that appears in the corpus most number of times.<br>
-2. Examine the coefficients of features/ words to determine predictive words per subreddit. 
+### Model Evaluation
+From the above graph, we can see that the two smoothing methods: moving average and exponential smoothing are the best-scoring models. Holt linear is not far behind. The remaining models: naive approach, ARIMA, and Prophet are the worst-scoring models. I believe that the accuracy of ARIMA and Prophet can be boosted significantly by tuning the hyperparameters. 
 
 
 
@@ -112,30 +116,12 @@ Data dictionary for the final set of features.
 
 
 ## Conclusions
-1) The first thing we can do is to look at the coefficients for every word, sorted 
-negative to positive. <br>
-2) In this model, we have assigned 'Premier League' comments to class 0 and NBA comments to class 1. So 
-the words with the strongest positive coefficients in our model are the words that are 
-most predictive of NBA (they push the outcome towards 1 the most). <br>
-3) And the words with the strongest negative coefficients are the most predictive of 
-Premier League (they push the outcome toward 0). <br>
-4) Moreover, the words with the most influential coefficients either positive or negative don't just 
-represent the words that are most likely to appear in posts within a given subreddit. <br>
-5) They are also unlikely to appear in posts of the other subreddit. In short, the model is looking for words that are highly frequent in one subreddit relative to the other.<br>
-6) These predictive words can be potentially employed in targeted marketing campaigns to improve the click- rate of a particular ad to the target subreddit member. <br>
-7. Business should get data directly from Reddit using API or RESTful API which is
-significantly faster than scraping (limit on posts).<br>
-8. Business may want to spend more advertising dollars on the NBA group as higher chance to convert 3.8m users to customers; more bang for the buck
+1) Most sales have a linearly trended sine wave shape, reminiscent of the macroeconomic business cycle.
+2) Several non-ML models can be used to forecast time series data. Moving average and exponential smoothing are very good models.
+3) ARIMA and Prophet's performance can be boosted with more hyperparamter tuning
+
 
 ## Limitations and Recommendations
-1) The analysis and modeling is based on ~1000 posts per subreddit which may not be a good representation of 
-the subreddit itself.<br>
-2) Comments were not scraped or included in modeling. <br>
-3) The hyper-parameters of the model has been tuned to include features/ words as many as 2500 to reduce 
-the variance between testing and training scores<br>
-4) But in reality, it may make sense to reduce the number of words<br>
-5) The model can be further enhanced :
-    - To eliminate synonyms, post agnostic words, common words
-    - To include phrases instead of just words for prediction.
-    - To include comments as part of post for analysis and modeling<br>
-6) The dataset of that the model is trained is likely not representative of the content of the subreddit in the long run. This is because a subreddit like Premier League and NBA changes with current events. As such, there needs to be a way for the model to recognize the type of content in the subreddit apart from individual words.
+1) Some models's performance can be boosted with more hyperparameter tyning.
+2) Models can be further evaluated by adding more data.
+
